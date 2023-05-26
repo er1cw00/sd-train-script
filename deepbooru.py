@@ -1,12 +1,23 @@
-
 import os
+import sys
+import getopt
 import torch
+import argparse
 from PIL import Image
-from modules import devices
+from modules import devices, cmd_args
 from modules.deepbooru import DeepDanbooru
 
-path = "/Users/wadahana/Downloads/Pic/训练集/Loretta/"
+parser = argparse.ArgumentParser()
+parser.add_argument("--path", type=str, help="input images path")
+opt = parser.parse_args()
 
+path = opt.path
+
+if not os.path.exists(path):
+    print(f'image path: {path} not exist!')
+    sys.exit(2)
+
+print(f'start tag images in: {path}')
 
 devices.dtype = torch.float32
 
@@ -26,7 +37,7 @@ for filename in os.listdir(path):
 
     img_path = os.path.join(path, filename)
     tag_path = os.path.join(path, t[0] + '.txt')
-    print(f'file: {img_path}, {tag_path}')
+    print(f'deepbooru: {filename} -> {tag_path}')
     img = Image.open(img_path)
     tag = x.tag(img)
     if len(tag) == 0:
